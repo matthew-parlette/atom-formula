@@ -1,0 +1,24 @@
+# -*- coding: utf-8 -*-
+# vim: ft=jinja
+
+{% import_yaml 'atom/defaults.yaml' as default_settings %}
+
+{% set os_family_map = salt['grains.filter_by']({
+        'Debian': {
+          'url': 'https://atom.io/download/deb'
+        },
+        'Suse': {},
+        'Arch': {},
+        'RedHat': {},
+  }
+  , grain="os_family"
+  , merge=salt['pillar.get']('atom:lookup'))
+%}
+{% do default_settings.atom.update(os_family_map) %}
+
+{% set atom = salt['pillar.get'](
+        'atom',
+        default=default_settings.atom,
+        merge=True
+    )
+%}
